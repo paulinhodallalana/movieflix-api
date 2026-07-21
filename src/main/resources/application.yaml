@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: Movieclips
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/movieflix
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+  flyway:
+    enabled: true
+
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+
+  swagger-ui:
+    path: /swagger-ui.html
+
+
+movieflix:
+  security:
+    secret: movieflixSecretKey2026MuitoSegura
