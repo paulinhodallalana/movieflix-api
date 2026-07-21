@@ -2,25 +2,38 @@
 
 API REST desenvolvida em **Java com Spring Boot** para gerenciamento de filmes, categorias, plataformas de streaming e usuários.
 
-O projeto simula uma plataforma de catálogo de filmes, permitindo o gerenciamento completo dos dados e autenticação segura de usuários.
+O projeto simula uma plataforma de catálogo de filmes, permitindo gerenciamento de conteúdo, autenticação de usuários e controle de acesso seguro.
+
+A aplicação foi construída seguindo boas práticas de desenvolvimento Back-end, utilizando arquitetura em camadas, DTOs, Mapper, Spring Security com JWT, banco PostgreSQL, migrations com Flyway e ambiente containerizado com Docker.
 
 ---
 
-## 🚀 Tecnologias utilizadas
+# 🚀 Tecnologias utilizadas
 
-* ☕ Java 25
-* 🚀 Spring Boot
-* 🌱 Spring Data JPA
-* 🏦 Hibernate ORM
-* 🔐 Spring Security
-* 🔑 JWT (JSON Web Token)
-* 🔒 BCrypt para criptografia de senha
-* 🐘 PostgreSQL
-* 🔄 Flyway (controle de migrations)
-* 📖 Swagger / OpenAPI
-* 📦 Maven
-* 🛠 Lombok
-* 💻 IntelliJ IDEA
+## ☕ Back-end
+
+* Java 25
+* Spring Boot
+* Spring Data JPA
+* Hibernate ORM
+* Spring Security
+* JWT (JSON Web Token)
+* BCrypt Password Encoder
+* Bean Validation
+* Swagger / OpenAPI
+* Lombok
+* Maven
+
+## 🗄 Banco de Dados
+
+* PostgreSQL
+* Flyway para versionamento das migrations
+
+## 🐳 Ambiente
+
+* Docker
+* Docker Compose
+* IntelliJ IDEA
 
 ---
 
@@ -30,22 +43,22 @@ O projeto simula uma plataforma de catálogo de filmes, permitindo o gerenciamen
 
 * Cadastro de filmes
 * Listagem de filmes
-* Busca por filmes
+* Busca de filmes
 * Atualização de filmes
 * Exclusão de filmes
-* Associação com categorias
-* Associação com plataformas de streaming
+* Associação entre filmes e categorias
+* Associação entre filmes e plataformas de streaming
 
 ## 🎭 Categorias
 
 * Cadastro de categorias
-* Consulta de categorias
+* Listagem de categorias
 * Atualização
-* Remoção
+* Exclusão
 
-## 📺 Streamings
+## 📺 Plataformas de Streaming
 
-* Cadastro de plataformas de streaming
+* Cadastro de serviços de streaming
 * Consulta
 * Atualização
 * Remoção
@@ -54,39 +67,38 @@ O projeto simula uma plataforma de catálogo de filmes, permitindo o gerenciamen
 
 * Cadastro de usuários
 * Login com autenticação JWT
-* Senhas armazenadas utilizando BCrypt
+* Criptografia de senha utilizando BCrypt
 * Controle de acesso utilizando Spring Security
 
 ---
 
-# 🏗 Arquitetura do projeto
+# 🏗 Arquitetura do Projeto
 
-O projeto foi desenvolvido seguindo uma arquitetura em camadas:
+O projeto utiliza arquitetura em camadas:
 
 ```
 Controller
-    ↓
+     |
+     ↓
 Service
-    ↓
+     |
+     ↓
 Repository
-    ↓
+     |
+     ↓
 Entity
 ```
 
-### Organização dos pacotes:
+Separação das responsabilidades:
 
 ```
-com.movieflix.movieflix
+src/main/java/com/movieflix/movieflix
 
 ├── Config
 │   ├── SecurityConfig
 │   └── TokenService
 │
 ├── Controller
-│   ├── MovieController
-│   ├── CategoryController
-│   ├── StreamingController
-│   └── AuthController
 │
 ├── Controller.request
 │   └── DTOs de entrada
@@ -95,16 +107,8 @@ com.movieflix.movieflix
 │   └── DTOs de saída
 │
 ├── Entity
-│   ├── Movie
-│   ├── Category
-│   ├── Streaming
-│   └── User
 │
 ├── Mapper
-│   ├── MovieMapper
-│   ├── CategoryMapper
-│   ├── StreamingMapper
-│   └── UserMapper
 │
 ├── Repository
 │
@@ -118,50 +122,97 @@ com.movieflix.movieflix
 
 ---
 
-# 🔗 Relacionamentos do Banco de Dados
+# 🐳 Docker
 
-### Filme e Categoria
+O projeto utiliza Docker para criar o ambiente do banco de dados PostgreSQL.
 
-```
-Movie
-  |
-  | ManyToMany
-  |
-Category
-```
+Com Docker, o banco pode ser iniciado rapidamente sem a necessidade de instalação manual.
 
-### Filme e Streaming
+## Estrutura do ambiente
 
 ```
-Movie
-  |
-  | ManyToMany
-  |
-Streaming
+MovieFlix API
+
+Spring Boot
+     |
+     |
+     ↓
+PostgreSQL Container
+     |
+     |
+     ↓
+Docker
 ```
 
 ---
 
-# 🔐 Segurança
+# 📦 Docker Compose
 
-A autenticação foi implementada utilizando:
-
-* Spring Security
-* JWT Token
-* BCrypt Password Encoder
-
-Fluxo:
+Arquivo utilizado:
 
 ```
-Usuário
-   |
-Login
-   |
-Validação das credenciais
-   |
-Geração do Token JWT
-   |
-Acesso aos endpoints protegidos
+docker-compose.yml
+```
+
+Exemplo de configuração:
+
+```yaml
+services:
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres-movieflix
+    restart: always
+
+    environment:
+      POSTGRES_DB: movieflix
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+volumes:
+  postgres_data:
+```
+
+---
+
+# ▶️ Executando o projeto com Docker
+
+## 1 - Subir o container PostgreSQL
+
+Na raiz do projeto:
+
+```bash
+docker compose up -d
+```
+
+---
+
+## 2 - Verificar o container
+
+```bash
+docker ps
+```
+
+Exemplo:
+
+```
+postgres-movieflix
+PORT 5433->5432
+```
+
+---
+
+## 3 - Parar o ambiente
+
+```bash
+docker compose down
 ```
 
 ---
@@ -174,22 +225,132 @@ Banco utilizado:
 PostgreSQL
 ```
 
-As alterações do banco são controladas pelo Flyway:
+Configuração da aplicação:
 
 ```
-db
- └── migration
-      ├── V1__create_tables.sql
-      ├── V2__insert_categories.sql
-      ├── V3__insert_streamings.sql
-      └── ...
+jdbc:postgresql://localhost:5433/movieflix
+```
+
+O gerenciamento das alterações do banco é realizado através do Flyway.
+
+Estrutura:
+
+```
+src/main/resources/db/migration
+
+V1__create_tables.sql
+
+V2__insert_categories.sql
+
+V3__insert_streamings.sql
+
+V4__create_relationships.sql
+
+...
 ```
 
 ---
 
-# 📚 Documentação da API
+# 🔄 Migrations com Flyway
 
-A documentação foi criada utilizando Swagger/OpenAPI.
+O Flyway permite:
+
+* Controle de versão do banco
+* Histórico das alterações
+* Criação automática das tabelas
+* Organização da evolução do banco
+
+Ao iniciar a aplicação:
+
+```
+Spring Boot
+      |
+      ↓
+Flyway verifica migrations
+      |
+      ↓
+Atualiza PostgreSQL
+```
+
+---
+
+# 🔗 Relacionamentos JPA
+
+## Filme e Categoria
+
+Relacionamento:
+
+```
+Movie
+
+@ManyToMany
+
+Category
+```
+
+Tabela intermediária:
+
+```
+movie_category
+```
+
+---
+
+## Filme e Streaming
+
+Relacionamento:
+
+```
+Movie
+
+@ManyToMany
+
+Streaming
+```
+
+Tabela intermediária:
+
+```
+movie_streaming
+```
+
+---
+
+# 🔐 Segurança
+
+A autenticação foi implementada utilizando:
+
+* Spring Security
+* JWT
+* BCrypt
+
+## Fluxo de autenticação
+
+```
+Usuário
+
+↓
+
+Login
+
+↓
+
+Validação email e senha
+
+↓
+
+Geração JWT Token
+
+↓
+
+Acesso aos endpoints protegidos
+```
+
+---
+
+# 📚 Documentação Swagger
+
+A API possui documentação utilizando Swagger/OpenAPI.
 
 Após iniciar a aplicação:
 
@@ -197,16 +358,17 @@ Após iniciar a aplicação:
 http://localhost:8080/swagger-ui/index.html
 ```
 
-Exemplo:
+A documentação apresenta:
 
-* Endpoints documentados
-* Modelos de Request
-* Modelos de Response
-* Testes diretamente pelo navegador
+* Endpoints disponíveis
+* Request Models
+* Response Models
+* Parâmetros
+* Testes da API
 
 ---
 
-# 📌 Exemplos de Endpoints
+# 📌 Endpoints principais
 
 ## Autenticação
 
@@ -214,66 +376,121 @@ Exemplo:
 POST /auth/login
 ```
 
-Login do usuário e geração do token JWT.
+Realiza login e retorna o token JWT.
+
+---
 
 ## Filmes
+
+Listar filmes:
 
 ```
 GET /movies
 ```
 
-Lista todos os filmes.
+Cadastrar filme:
 
 ```
 POST /movies
 ```
 
-Cadastra um novo filme.
+Atualizar filme:
 
 ```
 PUT /movies/{id}
 ```
 
-Atualiza um filme.
+Excluir filme:
 
 ```
 DELETE /movies/{id}
 ```
 
-Remove um filme.
+---
+
+## Categorias
+
+```
+GET /categories
+
+POST /categories
+
+PUT /categories/{id}
+
+DELETE /categories/{id}
+```
 
 ---
 
-# 🧪 Validações e tratamento de erros
+## Streamings
+
+```
+GET /streamings
+
+POST /streamings
+
+PUT /streamings/{id}
+
+DELETE /streamings/{id}
+```
+
+---
+
+# 🛡 Tratamento de Erros
 
 Implementado:
 
 * Bean Validation
-* @Valid nos Controllers
-* Exceções personalizadas
-* Tratamento global com Controller Advice
+* @Valid
+* Exceptions personalizadas
+* Controller Advice global
 
 ---
 
-# 🎯 Objetivo do projeto
+# 🧩 Padrões e boas práticas aplicadas
 
-Projeto desenvolvido para aprofundar conhecimentos em desenvolvimento **Back-end Java**, aplicando conceitos utilizados no mercado:
+* Arquitetura em camadas
+* DTO Pattern
+* Mapper Pattern
+* Repository Pattern
+* Separação de responsabilidades
+* Código organizado por domínio
+* Controle de exceções
+* Segurança baseada em token
+
+---
+
+# 🎯 Objetivo do Projeto
+
+Projeto desenvolvido para aprimorar conhecimentos em desenvolvimento Back-end Java utilizando tecnologias presentes no mercado.
+
+Aplicando conceitos de:
 
 * APIs REST
-* Segurança
+* Spring Boot
+* Segurança de aplicações
 * Banco de dados relacional
 * ORM
-* Arquitetura em camadas
-* Boas práticas de código
+* Docker
+* Versionamento de banco
+* Boas práticas de desenvolvimento
 
 ---
 
-## 👨‍💻 Desenvolvedor
+# 👨‍💻 Desenvolvedor
 
-Paulo Roberto Pereira Dalla Lana
+**Paulo Roberto Pereira Dalla Lana**
 
 Java Back-end Developer em formação
 
-Tecnologias principais:
+Principais tecnologias:
 
-Java | Spring Boot | PostgreSQL | APIs REST | Spring Security
+```
+Java
+Spring Boot
+PostgreSQL
+Docker
+JWT
+Hibernate
+REST API
+```
